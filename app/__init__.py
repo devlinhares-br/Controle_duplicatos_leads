@@ -1,5 +1,9 @@
 from flask import Flask
 from flask.cli import FlaskGroup
+import logging
+
+
+logging.basicConfig(filename='logs.log', level=logging.DEBUG)
 
 app = Flask(__name__)
 
