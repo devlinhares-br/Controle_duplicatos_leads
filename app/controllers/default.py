@@ -31,7 +31,6 @@ def controle_lead():
     if(len(leads) <= 1):
         return gera_response(200, 'return', {}, 'Sem duplicatos')
     merge = b24.merge()
-    print(merge)
     return gera_response(200, 'return', {merge['result']}, 'Sem duplicatos')
 
 def gera_response(status, nome_conteudo, conteudo, mensagem=False):

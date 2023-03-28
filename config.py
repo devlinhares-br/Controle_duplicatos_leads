@@ -1,3 +1,1 @@
-
-DEBUG = True
-PORT = 5050
+PORT = 212112
