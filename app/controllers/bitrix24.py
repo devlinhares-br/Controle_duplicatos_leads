@@ -1,4 +1,5 @@
 from app.exceptions.exceptions import TokenInvalido
+from datetime import datetime
 import os, requests, urllib.parse
 
 
@@ -37,9 +38,36 @@ class Bitrix24 ():
         response = requests.get(f'{os.getenv("baseurl")}crm.entity.mergeBatch.json?params[entityTypeId]=1&{"&".join(entity_ids_params)}')
         return response.json()
       
+    def activit(self, ENTITY_IDS, ENTITY_TYPE_ID=1, TYPE_ID=5):
+        ids = ','.join(ENTITY_IDS)
+        link = f"{os.getenv('domain')}crm/lead/merge/?id={ids}"
+        now = datetime.now()
+        r = []
+        for ENTITY_ID in ENTITY_IDS:
+            fields = { 
+                        "COMMUNICATIONS": [{'VALUE': "Conflito ao tentar mesclar Leads", 'ENTITY_ID': ENTITY_ID, "ENTITY_TYPE_ID": ENTITY_TYPE_ID}],
+                        "TYPE_ID": TYPE_ID,
+                        "SUBJECT": "Confilto ao mesclar Leads",
+                        "START_TIME": now.strftime('%Y-%m-%dT%H:%M:%S+00:00'),
+                        "COMPLETED": "N",
+                        "PRIORITY": 3,
+                        "RESPONSIBLE_ID": 1,
+                        "DESCRIPTION": f"<a href='{link}'>Leads para mesclar</a>",
+                        "DESCRIPTION_TYPE": 3
+                    }
+            field_strings = []
+            for k, v in fields.items():
+                if k == "COMMUNICATIONS":
+                    for i, comm in enumerate(v):
+                        for k2, v2 in comm.items():
+                            field_strings.append(f"fields[{k}][{i}][{k2}]={v2}")
+                else:
+                    field_strings.append(f"fields[{k}]={v}")
 
-    def get_phone(self, lead): 
-        if lead['HAS_PHONE'] == 'Y':
-                return lead['PHONE']['VALUE']
-        else:
-            return False
+            # Join the list of formatted strings with the "&" character to create the URL string
+            query_string = "&".join(field_strings)
+            print(query_string)
+            response = requests.get(f'{os.getenv("baseurl")}crm.activity.add.json?{query_string}')
+            r.append(response.json())
+        return {'results': r}
+            

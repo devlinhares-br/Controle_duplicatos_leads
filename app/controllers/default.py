@@ -31,8 +31,12 @@ def controle_lead():
     if(len(leads) <= 1):
         return gera_response(200, 'return', {}, 'Sem duplicatos')
     merge = b24.merge()
-    
-    return gera_response(200, 'return', merge['result']['STATUS'], 'Sem duplicatos')
+    if merge['result']['STATUS'] == 'SUCCESS':
+        return gera_response(200, 'return', merge['result']['STATUS'], 'Sem duplicatos')
+    elif merge['result']['STATUS'] == 'CONFLICT':
+        activit = b24.activit(ENTITY_IDS=leads)
+        print(activit)
+        return gera_response(200, 'return', activit, 'Sem duplicatos')
 
 def gera_response(status, nome_conteudo, conteudo, mensagem=False):
     body = {}
