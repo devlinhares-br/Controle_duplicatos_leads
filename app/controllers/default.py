@@ -34,9 +34,9 @@ def controle_lead():
     if merge['result']['STATUS'] == 'SUCCESS':
         return gera_response(200, 'return', merge['result']['STATUS'], 'Sem duplicatos')
     elif merge['result']['STATUS'] == 'CONFLICT':
-        activit = b24.activit(ENTITY_IDS=leads)
-        print(activit)
-        return gera_response(200, 'return', activit, 'Sem duplicatos')
+        comments = b24.comments(ENTITY_IDS=leads)
+        print(comments)
+        return gera_response(200, 'return', comments, 'Sem duplicatos')
 
 def gera_response(status, nome_conteudo, conteudo, mensagem=False):
     body = {}
